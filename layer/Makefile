@@ -29,7 +29,7 @@ libheif: libde265 libwebp
 	curl -L https://github.com/strukturag/libheif/releases/download/v$(LIBHEIF_VERSION)/libheif-$(LIBHEIF_VERSION).tar.gz | tar zx
 	cd libheif-$(LIBHEIF_VERSION) && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX_PATH) && make && make install
 	
-libvips: libheif libwebp
+libvips: installLib installCMake installMeson libheif libwebp
 	curl -L https://github.com/libvips/libvips/releases/download/v$(VIPS_VERSION)/vips-$(VIPS_VERSION).tar.xz | tar xJ
 	cd vips-$(VIPS_VERSION) && meson setup build --prefix=$(PREFIX_PATH)
 	cd vips-$(VIPS_VERSION)/build && meson compile
