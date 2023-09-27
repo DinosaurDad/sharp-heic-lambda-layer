@@ -25,11 +25,11 @@ libde265:
 	curl -L https://github.com/strukturag/libde265/releases/download/v$(LIBDE265_VERSION)/libde265-$(LIBDE265_VERSION).tar.gz | tar zx
 	cd libde265-$(LIBDE265_VERSION) && ./autogen.sh && ./configure --disable-dec265 --disable-sherlock265 --prefix=$(PREFIX_PATH) && make V=0 && make install
 
-libheif: installCMake libde265 libwebp
+libheif: libde265 libwebp
 	curl -L https://github.com/strukturag/libheif/releases/download/v$(LIBHEIF_VERSION)/libheif-$(LIBHEIF_VERSION).tar.gz | tar zx
 	cd libheif-$(LIBHEIF_VERSION) && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=$(PREFIX_PATH) && make && make install
 	
-libvips: installLib libheif libwebp
+libvips: installLib installCMake installMeson libheif libwebp
 	curl -L https://github.com/libvips/libvips/releases/download/v$(VIPS_VERSION)/vips-$(VIPS_VERSION).tar.xz | tar xJ
 	cd vips-$(VIPS_VERSION) && meson setup build --prefix=$(PREFIX_PATH)
 	cd vips-$(VIPS_VERSION)/build && meson compile
@@ -48,8 +48,21 @@ installLib:
 		libexif-devel \
 		librsvg2-devel \
 		libtiff-devel \
-		lcms2-devel
+		lcms2-devel \
+		gcc-c++ \
+		make \
+		curl \
+		wget \
+		openssl \
+		openssl-devel \
+		gobject-introspection \
+		gobject-introspection-devel
 
 installCMake:
 	curl -L https://github.com/Kitware/CMake/releases/download/v$(CMAKE_VERSION)/cmake-$(CMAKE_VERSION).tar.gz | tar zx
 	cd cmake-$(CMAKE_VERSION) && ./bootstrap --prefix=$(PREFIX_PATH) && make && make install
+
+installMeson:
+	yum install -y python3-pip && \
+	pip3 install --user meson ninja
+
